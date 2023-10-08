@@ -2,7 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-import plot_decision_region
+from plot_decision_region import plot_decision_region
 
 class Perceptron(object):
     """パーセプトロンの分類機
