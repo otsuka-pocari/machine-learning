@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import plot_decision_region
 
 class Perceptron(object):
     """パーセプトロンの分類機
@@ -105,5 +106,12 @@ if __name__ == '__main__':
     # 軸のラベルの設定
     plt.xlabel('Epochs')
     plt.ylabel('Number of update')
+    # 決定領域のプロット
+    plot_decision_region(X, y, classifier=ppn)
+    # 軸のラベルの設定
+    plt.xlabel('sepal length [cm]')
+    plt.ylabel('petal length [cm]')
+    # 凡例の設定(左上に配置)
+    plt.legend(loc='upper left')
     # 図の表示
     plt.show()
