@@ -51,6 +51,7 @@ plt.ylabel('Number of update')
 print('-------\n')
 # fig3に保存
 fig = plt.figure(3)
+print('P32----')
 # 決定領域のプロット
 plot_decision_regions(X, y, classifier=ppn)
 # 軸ラベルの設定
@@ -58,6 +59,7 @@ plt.xlabel('sepal length [cm]')
 plt.ylabel('petal length [cm]')
 # 凡例の設定(左上に配置)
 plt.legend(loc='upper left')
+print('-------')
 # 図の表示
 plt.show()
 
