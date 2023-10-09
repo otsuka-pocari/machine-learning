@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ADALINE import AdalineGD
 from plot_decision_regions import plot_decision_regions
+from ADALINE_by_SGD import AdalineSGD
 
 s = os.path.join('https://archive.ics.uci.edu', 'ml',
                  'machine-learning-databases', 'iris', 'iris.data')
@@ -54,6 +55,7 @@ ada_gd = AdalineGD(n_iter=15, eta=0.01)
 ada_gd.fit(X_std, y)
 # 境界領域のプロット
 plot_decision_regions(X_std, y, classifier=ada_gd)
+# plot
 # タイトルの設定
 plt.title('Adaline - gradient Descent')
 # 軸のラベルの設定
@@ -68,6 +70,31 @@ plt.plot(range(1, len(ada_gd.cost_) + 1), ada_gd.cost_, marker='o')
 # 軸のラベルの設定
 plt.xlabel('Epochs')
 plt.ylabel('Sum-squared-error')
-# 図の表示
+
+print('P46----')
+# fig4に保存
+fig =plt.figure(4)
+# 確率的勾配降下法によるADALINEの学習
+ada_sgd = AdalineSGD(n_iter=15,  eta=0.01, random_state=1)
+# モデルへの適応
+ada_sgd.fit(X_std, y)
+#境界領域のプロット
+plot_decision_regions(X_std, y, classifier=ada_sgd)
+# タイトルの設定
+plt.title('Adaline - Stochastic Gradient Descent')
+# 軸のラベルの設定
+plt.xlabel('sepal length[standardized]')
+plt.ylabel('petal length[standardized]')
+# 凡例の設定(左上に配置)
+plt.legend(loc='upper left')
+# fig5に保存
+fig = plt.figure(5)
+# エポックとコストの折れ線グラフのプロット
+plt.plot(range(1, len(ada_sgd.cost_) + 1),  ada_sgd.cost_, marker='o')
+# 軸のラベルの設定
+plt.xlabel('Epochs')
+plt.ylabel('Average Cost')
+# プロットの表示
 plt.tight_layout()
 plt.show()
+
