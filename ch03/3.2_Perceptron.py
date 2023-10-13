@@ -1,10 +1,13 @@
 from sklearn import datasets
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Perceptron
 from sklearn.metrics import accuracy_score
+from plot_decision_regions import plot_decision_regions
 
+print('P50-53')
 # Irisデータセットをロード
 iris = datasets.load_iris()
 # 3, 4 行目の特徴量を抽出
@@ -40,3 +43,21 @@ print('Misclassified examples* %d' % (y_test != y_pred).sum())
 # 分類のっ正解率を表示
 print('Accuracy: %.3f' % accuracy_score(y_test, y_pred))
 print('Accuracy: %.3f' % ppn.score(X_test_std, y_test))
+print('------\n')
+
+print('P54----')
+#訓練データとテストデータの特徴量を行方向に結合
+X_combined_std = np.vstack((X_train_std, X_test_std))
+# 訓練データとテストデータのクラスラベルを結合
+y_combined = np.hstack((y_train, y_test))
+# 決定領域のプロット
+plot_decision_regions(X=X_combined_std, y=y_combined, classifier=ppn,
+                      test_idx=range(105,150))
+# 軸のラベルの設定
+plt.xlabel('petal length[staandardized]')
+plt.ylabel('petal width[staandardized]')
+# 凡例の設定(左上に配置)
+plt.legend(loc='upper left')
+# グラフを表示
+plt.tight_layout()
+plt.show()
