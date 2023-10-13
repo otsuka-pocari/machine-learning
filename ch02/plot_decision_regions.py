@@ -6,7 +6,7 @@ def plot_decision_regions(X, y, classifier, resolution=0.02):
     
     # マーカーとカラーマップの準備
     markers = ('s', 'x', 'o', '^', 'v')
-    # 参考書のコードではできなかったので()→[]に変更
+    """参考書のコードではできなかったので()→[]に変更"""
     colors = ['red', 'blue', 'lightgreen', 'gray', 'cyan']
     cmap = ListedColormap(colors[:len(np.unique(y))])
     # 決定領域のプロット
