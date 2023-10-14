@@ -1,5 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from LogisticRegressionGD import LogisticRegressionGD
+from plot_decision_regions import plot_decision_regions
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 print('3.3.1-ロジスティック回帰の直感的知識と条件付き確率---')
 # シグモイド何晏数を定義
@@ -57,7 +62,33 @@ plt.xlabel('$\phi$(z)')
 plt.ylabel('J(w)')
 # 凡例を設定
 plt.legend(loc='upper center')
-# グラフを表示
+print('---\n')
+
+print('3.3.3-ADALINE実装をロジスティック回帰のアルゴリズムに変換する')
+# 前章からのコードの引用
+iris = datasets.load_iris()
+X = iris.data[:, [2, 3]]
+y = iris.target
+X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=1, stratify=y)
+sc = StandardScaler()
+sc.fit(X_train)
+X_train_std = sc.transform(X_train)
+X_test_std = sc.transform(X_test)
+
+X_train_01_subset = X_train_std[(y_train == 0) | (y_train == 1)]
+y_train_01_subset = y_train[(y_train == 0) | (y_train== 1)]
+fig = plt.figure(3)
+print('fig3')
+# ロジスティック回帰のインスタンスを生成
+lrgd = LogisticRegressionGD(eta=0.05, n_iter=1000, random_state=1)
+# モデルを訓練データに適合させる
+lrgd.fit(X_train_01_subset, y_train_01_subset)
+# 決定領域をプロット
+plot_decision_regions(X=X_train_01_subset, y=y_train_01_subset, classifier=lrgd)
+plt.xlabel('petal length [standardized]')
+plt.ylabel('petal width [standardized]')
+plt.legend(loc='upper left')
+# 図の表示
 plt.tight_layout()
 plt.show()
-print('---\n')
