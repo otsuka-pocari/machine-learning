@@ -1,8 +1,10 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Perceptron
+from sklearn.linear_model import SGDClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 from plot_decision_regions import plot_decision_regions
@@ -37,7 +39,15 @@ plot_decision_regions(X_combined_std, y_combined, classifier=svm,
 plt.xlabel('petal length [standardized]')
 plt.ylabel('petal width [standardized]')
 plt.legend(loc='upper left')
-print('---\n')
-
 plt.tight_layout()
 plt.show()
+print('---\n')
+
+print('3.4.3-scikit-learnでの代用実装')
+# 確率的勾配降下法バージョンのパーセプトロンを生成
+ppn = SGDClassifier(loss='perceptron')
+# 確率的勾配降下法バージョンのロジスティック回帰を生成
+lr = SGDClassifier(loss='log')
+# 確率的勾配降下法のバージョンのSVM(損失関数=ヒンジ関数)を生成
+svm = SGDClassifier(loss='hinge')
+print('---')
