@@ -5,11 +5,14 @@ from plot_decision_regions import plot_decision_regions
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import Perceptron
 
 print('3.3.1-ロジスティック回帰の直感的知識と条件付き確率---')
 # シグモイド何晏数を定義
 def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-z))
+# figに保存
 fig = plt.figure(1)
 print('fig1')
 # 0.1間隔で-7以上7っ未満のデータを生成
@@ -39,7 +42,7 @@ def cost_1(z):
 # y=0のコストを計算する関数
 def cost_0(z):
     return - np.log(1 - sigmoid(z))
-
+# figに保存
 fig = plt.figure(2)
 print('fig2')
 # 0.1間隔で-10以上10未満のデータを生成
@@ -65,7 +68,7 @@ plt.legend(loc='upper center')
 print('---\n')
 
 print('3.3.3-ADALINE実装をロジスティック回帰のアルゴリズムに変換する')
-# 前章からのコードの引用
+# 3.2からのコードの引用
 iris = datasets.load_iris()
 X = iris.data[:, [2, 3]]
 y = iris.target
@@ -78,6 +81,7 @@ X_test_std = sc.transform(X_test)
 
 X_train_01_subset = X_train_std[(y_train == 0) | (y_train == 1)]
 y_train_01_subset = y_train[(y_train == 0) | (y_train== 1)]
+# figに保存
 fig = plt.figure(3)
 print('fig3')
 # ロジスティック回帰のインスタンスを生成
@@ -89,6 +93,27 @@ plot_decision_regions(X=X_train_01_subset, y=y_train_01_subset, classifier=lrgd)
 plt.xlabel('petal length [standardized]')
 plt.ylabel('petal width [standardized]')
 plt.legend(loc='upper left')
-# 図の表示
-plt.tight_layout()
-plt.show()
+print('---\n')
+
+print('3.3.4-scikit-learnを使ったロジスティック回帰モデルの訓練')
+# 3.2からのコードの引用
+X_combined_std = np.vstack((X_train_std, X_test_std))
+y_combined = np.hstack((y_train, y_test))
+# figに保存
+fig = plt.figure(4)
+print('fig4')
+# ロジスティック回帰のインスタンスを生成
+lr = LogisticRegression(C=100.0, random_state=1, solver='lbfgs', multi_class='ovr')
+# 訓練データをモデルに適合させる
+lr.fit(X_train_std, y_train)
+# 決定領域をプロット
+plot_decision_regions(X_combined_std, y_combined, classifier=lr,
+                      test_idx=range(105, 150))
+plt.xlabel('petal length [standardized]')
+plt.ylabel('petal wigth [standardized]')
+plt.legend(loc='upper left')
+
+print(lr.predict_proba(X_test_std[:3,:]))
+print(lr.predict(X_test_std[:3, :]))
+print(lr.predict(X_test_std[0, :].reshape(1, -1)))
+print('---\n')
