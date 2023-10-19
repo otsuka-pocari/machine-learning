@@ -23,3 +23,14 @@ err = [error(i) for i in x]
 # 図の作成を開始
 fig = plt.figure()
 ax = plt.subplot(111)
+# エントロピー(2種)、分類誤差のそれぞれをループ処理
+for i, lab, ls, c, in zip([ent, sc_ent, gini(x), err],
+                          ['Entropy', 'Entropy(scaled)',
+                           'Gini impurity', 'Misclassification error'],
+                          ['-', '-', '--', '-.'],
+                          ['black', 'lightgray', 'red', 'green', 'cyan']):
+    line = ax.plot(x, i, label=lab, linestyle=ls, lw=2, color=c)
+
+# 凡例の設定(中央の上に配置)
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),
+          ncol=5, fancybox=True, shadow=False)
