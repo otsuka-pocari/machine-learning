@@ -3,11 +3,12 @@ import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
-from plot_decision_regions import plot_decision_regions
 from sklearn import tree
-from pydotplus import graph_from_dot_data
 from sklearn.tree import export_graphviz
+from sklearn.ensemble import RandomForestClassifier
+from pydotplus import graph_from_dot_data
 import matplotlib.image as mpimg
+from plot_decision_regions import plot_decision_regions
 
 # 前提コード
 iris = datasets.load_iris()
@@ -91,4 +92,21 @@ graph = graph_from_dot_data(dot_data)
 graph.write_png('tree.png')
 img = mpimg.imread('tree.png')
 imgplot = plt.imshow(img)
+print('---')
+
+print('3.6.3-ランダムフォレストを使って複数の決定機を結合する')
+# ジニ不純度を指標とするランダムフォレストのインスタンスを生成
+forest = RandomForestClassifier(criterion='gini',
+                                n_estimators=25, random_state=1, n_jobs=2)
+# 訓練データにランダムフォレストのモデルを適合させる
+forest.fit(X_train, y_train)
+# figに保存
+fig = plt.figure(5)
+print('fig5')
+plot_decision_regions(X_combined, y_combined, classifier=forest,
+                      test_idx=range(105,150))
+plt.xlabel('petal length [cm]')
+plt.ylabel('petal width [cm]')
+plt.legend(loc='upper left')
+plt.tight_layout()
 plt.show()
