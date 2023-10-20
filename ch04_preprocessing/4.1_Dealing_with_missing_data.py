@@ -1,5 +1,7 @@
 import pandas as pd
+import numpy as np
 from io import StringIO
+from sklearn.impute import SimpleImputer
 
 print('4.1.1-表形式のデータで欠陥値を特定する')
 # サンプルデータを作成
@@ -30,3 +32,14 @@ print(df.dropna(thresh=4))
 print('------')
 # 特定の列(この場合は'C')にNaNが服割れている行だけを削除
 print(df.dropna(subset=['C']))
+print('------')
+print('4.1.3-欠陥値を補完する')
+# 欠陥値補完のインスタンスを生成(平均値補完)
+imr = SimpleImputer(missing_values=np.nan, strategy='mean')
+# データを適合
+imr = imr.fit(df.values)
+# 補完を実行
+imputed_data = imr.transform(df.values)
+print(imputed_data)
+print('------')
+print(df.fillna(df.mean()))
