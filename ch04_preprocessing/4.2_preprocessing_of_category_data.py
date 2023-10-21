@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 print('4.2.2-pandasを使ったカテゴリーデータのエンコーディング')
 # サンプルデータを生成
@@ -48,3 +50,31 @@ print(y)
 print('------')
 # クラスラベルを文字列に戻す
 print(class_le.inverse_transform(y))
+print('------')
+print('4.2.5-各特徴量でのone-hotエンコーディング')
+# Tシャツの色、サイズ、価格を抽出
+X = df[['color', 'size', 'price']].values
+color_le = LabelEncoder()
+X[:, 0] = color_le.fit_transform(X[:, 0])
+print(X)
+print('------')
+# One-hotエンコーダーの生成
+color_ohe = OneHotEncoder()
+# one-hotエンコーディングを実行
+print(color_ohe.fit_transform(X[:, 0].reshape(-1, 1)).toarray())
+print('------')
+c_transf = ColumnTransformer([('onehot', OneHotEncoder(), [0]),
+                              ('nothing', 'passthrough', [1, 2])])
+print(c_transf.fit_transform(X).astype(float))
+print('------')
+# one-hotエンコーディングを実行
+print(pd.get_dummies(df[['price', 'color', 'size']]))
+print('------')
+# one-hotエンコーディングを実行
+print(pd.get_dummies(df[['price', 'color', 'size']], drop_first=True))
+print('------')
+# one-hotエンコーダーの生成
+color_ohe = OneHotEncoder(categories='auto', drop='first')
+c_transf = ColumnTransformer([('onehot', color_ohe, [0]),
+                              ('nothing', 'passthrough', [1, 2])])
+print(c_transf.fit_transform(X).astype(float))
