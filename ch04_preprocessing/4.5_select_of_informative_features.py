@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from SBS import SBS
 
 # 前提コード
 df_wine = pd.read_csv(
@@ -72,5 +74,23 @@ plt.xlabel('C')
 plt.xscale('log')
 plt.legend(loc='upper left')
 ax.legend(loc='upper center', bbox_to_anchor=(1.38, 1.03), ncol=1, fancybox=True)
+plt.tight_layout()
+plt.show()
+
+fig = plt.figure(2)
+# k最近傍法分類器のインスタンスを生成(近傍点数=5)
+knn = KNeighborsClassifier(n_neighbors=5)
+# 逐次後退選択のインスタンスを生成
+sbs = SBS(knn, k_features=1)
+# 逐次後退選択を実行
+sbs.fit(X_train_std, y_train)
+# 特徴量の個数のリスト(13, 13, ..., 1)
+k_feat = [len(k) for k in sbs.subsets_]
+# 横軸を特徴量の個数、縦軸をスコアとした折れ線グラフのプロット
+plt.plot(k_feat, sbs.scores_, marker='o')
+plt.ylim([0.7, 1.02])
+plt.ylabel('Accuracy')
+plt.xlabel('Number of features')
+plt.grid()
 plt.tight_layout()
 plt.show()

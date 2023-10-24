@@ -24,7 +24,7 @@ class SBS():
                 X, y, test_size=self.test_size, random_state=self.random_state)
         # すべての特徴量の個数、列インデックス
         dim = X_train.shape[1]
-        self.indices_ = X_train.shape[1]
+        self.indices_ = tuple(range(dim))
         self.subsets_ = [self.indices_]
         # すべての特徴量を用いてスコアを算出
         score = self._calc_score(X_train, y_train,
