@@ -94,3 +94,22 @@ plt.xlabel('Number of features')
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+k3 = list(sbs.subsets_[10])
+print(df_wine.columns[1:][k3])
+
+# 13個の特徴量を用いてモデルを適合
+knn.fit(X_train_std, y_train)
+# 訓練の正解率を出力
+print('Training accuracy:', knn.score(X_train_std, y_train))
+
+# テストの正解率を出力
+print('Test accuracy:', knn.score(X_test_std, y_test))
+
+# 3つの特徴量を用いてモデルを適合
+knn.fit(X_train_std[:, k3], y_train)
+# 訓練の正解率を出力
+print('Training accuracy:', knn.score(X_train_std[:, k3], y_train))
+
+# テストの正解率を出力
+print('Test accuracy:', knn.score(X_test_std[:, k3], y_test))
