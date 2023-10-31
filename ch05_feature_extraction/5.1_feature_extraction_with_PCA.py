@@ -45,3 +45,12 @@ plt.legend(loc='best')
 plt.tight_layout()
 plt.show()
 print('------')
+
+print('5.1.4-特徴量変換')
+# (固有値, 固有ベクトル)のタプルのリストを生成
+eigen_pairs = [(np.abs(eigen_vals[i]),eigen_vecs[:,i])
+               for i in range(len(eigen_vals))]
+# (固有値, 固有ベクトル)のタプルを大きいものから順に並び替え
+eigen_pairs.sort(key=lambda k: k[0], reverse=True)
+w= np.hstack((eigen_pairs[0][1][:, np.newaxis], eigen_pairs[1][1][:, np.newaxis]))
+print('Matrix W:\n',w)
