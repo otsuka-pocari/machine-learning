@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.decomposition import PCA
+from plot_decision_regions import plot_decision_regions
 
 print('5.1.2-主成分を抽出する')
 df_wine = pd.read_csv('https://archive.ics.uci.edu/ml/'
@@ -72,3 +75,34 @@ plt.legend(loc='lower left')
 plt.tight_layout()
 plt.show()
 print('------')
+
+print('5.1.5-scikit-learnの主成分分析')
+# 主成分数を指定して、PCAのインスタンスを生成
+pca = PCA(n_components=2)
+# ロジスティック回帰のインスタンスを生成
+lr = LogisticRegression(multi_class='ovr', random_state=1, solver='lbfgs')
+# 次元削減
+X_train_pca = pca.fit_transform(X_train_std)
+X_test_pca = pca.transform(X_test_std)
+# 削減したデータセットでロジスティック回帰モデルを適合
+lr.fit(X_train_pca, y_train)
+# 決定猟奇をプロット
+plot_decision_regions(X_train_pca, y_train, classifier=lr)
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.legend(loc='lower left')
+plt.tight_layout()
+plt.show()
+
+# 決定領域をプロット
+plot_decision_regions(X_test_pca, y_test, classifier=lr)
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.legend(loc='upper left')
+plt.tight_layout()
+plt.show()
+
+pca = PCA(n_components=None)
+X_train_pca = pca.fit_transform(X_train_std)
+# 分散説明率を計算
+print(pca.explained_variance_ratio_)
