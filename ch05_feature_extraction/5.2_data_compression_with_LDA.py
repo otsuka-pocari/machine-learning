@@ -41,3 +41,18 @@ for label, mv in zip(range(1, 4), mean_vecs):
     S_W += class_scatter
 
 print('Scaled within-class scatter matrix: %sx%s' % (S_W.shape[0], S_W.shape[1]))
+
+mean_overall = np.mean(X_train_std, axis=0)
+d = 13  # 特徴量の個数
+S_B = np.zeros((d, d))
+for i, mean_vec in enumerate(mean_vecs):
+    n = X_train_std[y_train == i + 1, :].shape[0]
+    mean_vec = mean_vec.reshape(d, 1)  # 列ベクトルを作成
+    mean_overall = mean_overall.reshape(d, 1)
+    S_B += n * (mean_vec - mean_overall).dot((mean_vec - mean_overall).T)
+
+print('Between-class scatter matrix: %sx%s' % (S_B.shape[0], S_B.shape[1]))
+print('------')
+
+print('5.2.4-新しい特徴量部分空間の線形判別を選択する')
+#
