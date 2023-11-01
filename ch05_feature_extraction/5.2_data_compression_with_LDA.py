@@ -79,11 +79,27 @@ plt.ylabel('"Discriminability" ratio')
 plt.xlabel('Linear Discriminants')
 plt.ylim([-0.1, 1.1])
 plt.legend(loc='best')
-plt.tight_layout()
-plt.show()
 
 # 2つの固有ベクトルから変換行列を作成
 w = np.hstack((eigen_pairs[0][1][:, np.newaxis].real,
                eigen_pairs[1][1][:, np.newaxis].real))
 print('Matrix W:\n', w)
 print('------')
+
+print('5.2.5-新しい特徴量空間にデータ点に射影する')
+# figに保存
+fig = plt.figure(2)
+print('fig2')
+# 標準化した訓練データに変換行列を掛ける
+X_train_lda = X_train_std.dot(w)
+colors = ['r', 'b', 'g']
+markers = ['s', 'x', 'o']
+for l, c, m in zip(np.unique(y_train), colors, markers):
+    plt.scatter(X_train_lda[y_train == l, 0], X_train_lda[y_train == l, 1] * (-1),
+                c = c, label=l, marker=m)
+
+plt.xlabel('LD 1')
+plt.ylabel('LD 2')
+plt.legend(loc='lower right')
+plt.tight_layout()
+plt.show()
