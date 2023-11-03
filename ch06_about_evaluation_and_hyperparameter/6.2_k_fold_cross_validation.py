@@ -7,6 +7,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import cross_val_score
 
 # 前提コード
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/'
@@ -44,3 +45,11 @@ for k, (train, test) in enumerate(kfold):
 
 # 正解率の平均と標準偏差を出力
 print('\nCV accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
+
+# 交差検証のcross_val_score関数でモデルの正解率を算出
+# 推定器estimator、訓練データX、予測値y、分割数cv、CPU数n_jobsを指定
+scores = cross_val_score(estimator=pipe_lr,
+                         X=X_train, y=y_train,
+                         cv=10, n_jobs=1)
+print('CV accuracy scores: %s' % scores)
+print('CV accuracy: %.3f +/- %.3f' % (np.mean(scores), np.std(scores)))
