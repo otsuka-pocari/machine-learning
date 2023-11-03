@@ -6,7 +6,7 @@ from scipy.linalg import eigh
 import numpy as np
 import pandas as pd
 
-def rbf_kernel_pca(X, gamma, n_components):
+def revised_rbf_kernel_pca(X, gamma, n_components):
     """RBFカーネルPCAの実装
 
     パラメータ
@@ -23,6 +23,9 @@ def rbf_kernel_pca(X, gamma, n_components):
     ------------
     X_pc: {Numpy ndarray}, shape = [n_examples, k_features]
         射影されたデータセット
+
+    lambdas : list
+        固有値
 
     """
     # M×M次元のデータセットでペアごとのユークリッド距離の2乗を計算
@@ -44,7 +47,8 @@ def rbf_kernel_pca(X, gamma, n_components):
     eigvals, eigvecs = eigvals[::-1], eigvecs[:, ::-1]
 
     # 上位k個の固有ベクトル(射影されたデータ点)を収集
-    # stack(())をstack([])に変更 うまく行かなっかたので+1したり開始点をiにした
-    X_pc = np.column_stack([eigvecs[:, i:i+1] for i in range(n_components)])
+    # stack(())をstack([])に変更
+    alphas = np.column_stack([eigvecs[:, i:i+1] for i in range(n_components)])
 
-    return X_pc
+    lambdas = [eigvals[i] for i in range(n_components)]
+    return alphas, lambdas
