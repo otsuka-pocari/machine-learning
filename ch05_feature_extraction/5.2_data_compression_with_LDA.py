@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.linear_model import LogisticRegression
+from plot_decision_regions import plot_decision_regions
 
 # 前提コード
 df_wine = pd.read_csv('https://archive.ics.uci.edu/ml/'
@@ -101,5 +104,27 @@ for l, c, m in zip(np.unique(y_train), colors, markers):
 plt.xlabel('LD 1')
 plt.ylabel('LD 2')
 plt.legend(loc='lower right')
+plt.tight_layout()
+plt.show()
+
+print('5.2.6-scikit-learnによる線形判別分析')
+# 次元数を指定して、LDAのインスタンスを生成
+lda = LDA(n_components=2)
+X_train_lda = lda.fit_transform(X_train_std, y_train)
+
+lr = LogisticRegression(multi_class='ovr', random_state=1)
+lr = lr.fit(X_train_lda, y_train)
+plot_decision_regions(X_train_lda, y_train, classifier=lr)
+plt.xlabel('LD 1')
+plt.ylabel('LD 2')
+plt.legend(loc='lower left')
+plt.tight_layout()
+plt.show()
+
+X_test_lda = lda.transform(X_test_std)
+plot_decision_regions(X_test_lda, y_test, classifier=lr)
+plt.xlabel('LD 1')
+plt.ylabel('LD 2')
+plt.legend(loc='lower left')
 plt.tight_layout()
 plt.show()
