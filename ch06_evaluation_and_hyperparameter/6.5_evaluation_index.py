@@ -60,4 +60,15 @@ print('F1: %.3f' % f1_score(y_true=y_test, y_pred=y_pred))
 # カスタムの性能指標を出力
 c_gamma_range = [0.01, 0.1, 1.0, 10.0]
 param_grid = [{'svc__C':c_gamma_range, 'svc__kernel':['linear']},
-              {}]
+              {'svc__C':c_gamma_range, 'svc__gamma':c_gamma_range,
+               'svc__kernel':['rbf']}]
+
+scorer = make_scorer(f1_score, pos_label=0)
+gs = GridSearchCV(estimator=pipe_svc,
+                  param_grid=param_grid,
+                  scoring=scorer,
+                  cv=10, n_jobs=-1)
+gs = gs.fit(X_train, y_train)
+print(gs.best_score_)
+print(gs.best_params_)
+print('------')
