@@ -35,6 +35,101 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
 
     def fit(sself, X, y):
         """ 分類機を学習させる
-        
+
+        パラメータ
+        ----------
+        X : {arraay-like, sparse matrix}, shape = [n_examples, n_features]
+
+        y : array-like, shape = [n_examples]
+
+        戻り値
+        -------
+        self : object
 
         """
+        if self.vote not in ('probability', 'classlabel'):
+            raise ValueError("vote must be 'probability'"
+                             "or 'classlabel'; got (vote=%r)" % self.vote)
+
+        if self.weights and len(self.weights) != len(self.classifiers):
+            raise ValueError("Number of classifiers and weights must be equal; "
+                             "got %d weights, %d classifiers"
+                             % (len(self.weights), len(self.classifiers)))
+            # LabelEncoderを使ってクラスラベルが0から始まるようにエンコードする
+            # self.predictのnp.argmax呼び出しで重要になる
+            self.lablenc_ = LabelEncoder()
+            self.lablenc_.fit(y)
+            self.classifiers_ = []
+            for clf in self.classifiers:
+                fitted_clf = clone(clf).fit(X, self.lablenc_.tranform(y))
+                self.classifiers_.append(fitted_clf)
+            return self
+
+    def predict(self, X):
+        """ Xのクラスラベルを予測する
+
+        パラメータ
+        ----------
+        X :{array-like, sparse matrix}, shape = [n_examples, n_features]
+            訓練データからなる行列
+
+        戻り値
+        ----------
+        maj_vote : array-like, shape = [n_examples]
+            予測されたクラスラベル
+
+        """
+        if self.vote == 'probability':
+            maj_vote = np.arxmax(self.predict_proba(X), axis=1)
+        else: # 'classlabel'での多数決
+
+            # clf.predict呼び出しの結果を収集
+            predictions = np.asarray([clf.predict(X)
+                                       for clf in self.classifier_]).T
+
+            # 各データ点のクラス確率に重みを掛け合わせた値が最大となる
+            # 列番号を配列として返す
+            maj_vote = np.apply_along_axis(
+                    lambda x:
+                    np.argmax(np.bincount(x, weights=self.weights)),
+                    axis=1,
+                    arr=predictions)
+
+            # 各データ点に確率の最大値を与えるクラスラベルを抽出
+            maj_vote = self.labl;enc_.inverse_transform(maj_vote)
+            return maj_vote
+
+    def predict_proba(self, X):
+        """ Xのクラス確率を予測する
+
+        パラメータ
+        ----------
+        X : {array-like}, shape = [n_examples, n_features]
+             訓練ベクトル:n_examplesはデータ点の個数、n_featuresは特徴量の個数
+
+        戻り値
+        ---------
+        avg_proba : array-like, shape = [n_examples, n_classes]
+            各データ点に対する各クラスで重み付けた平均確率
+
+        """
+        avg_probas = np.asarray([clf.predict_proba(X)
+                                 for clf in self.classifiers_])
+        avg_proba = np.average(probas, axis=0, weights=self.weights)
+        return avg_proba
+
+    def get_params(self, deep=True):
+        """ GridSearchの実行時に分類器のパラメータ名を取得"""
+        if not deep:
+            return super(MajorityVoteClassifier, self).get_params(deep=False)
+        else:
+            # キーを"分類器の名前__パラメータ名"、
+            # 値をパラメータの値とするディクショナリを生成
+            out = self.named_classifiers.copy()
+            for name, step in self.named_classifiers.items():
+                for key, value in step.get_params(deep=True).items():
+                    out['%s__%s' % (name, key)] = value
+
+            return out
+        """
+                    )
