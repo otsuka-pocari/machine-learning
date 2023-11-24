@@ -33,7 +33,7 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
         self.vote = vote
         self.weights = weights
 
-    def fit(sself, X, y):
+    def fit(self, X, y):
         """ 分類機を学習させる
 
         パラメータ
@@ -55,15 +55,16 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
             raise ValueError("Number of classifiers and weights must be equal; "
                              "got %d weights, %d classifiers"
                              % (len(self.weights), len(self.classifiers)))
-            # LabelEncoderを使ってクラスラベルが0から始まるようにエンコードする
-            # self.predictのnp.argmax呼び出しで重要になる
-            self.lablenc_ = LabelEncoder()
-            self.lablenc_.fit(y)
-            self.classifiers_ = []
-            for clf in self.classifiers:
-                fitted_clf = clone(clf).fit(X, self.lablenc_.tranform(y))
-                self.classifiers_.append(fitted_clf)
-            return self
+        # LabelEncoderを使ってクラスラベルが0から始まるようにエンコードする
+        # self.predictのnp.argmax呼び出しで重要になる
+        self.lablenc_ = LabelEncoder()
+        self.lablenc_.fit(y)
+        self.classes_ = self.lablenc_.classes_
+        self.classifiers_ = []
+        for clf in self.classifiers:
+            fitted_clf = clone(clf).fit(X, self.lablenc_.transform(y))
+            self.classifiers_.append(fitted_clf)
+        return self
 
     def predict(self, X):
         """ Xのクラスラベルを予測する
@@ -96,7 +97,7 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
                     arr=predictions)
 
             # 各データ点に確率の最大値を与えるクラスラベルを抽出
-            maj_vote = self.labl;enc_.inverse_transform(maj_vote)
+            maj_vote = self.lablenc_.inverse_transform(maj_vote)
             return maj_vote
 
     def predict_proba(self, X):
@@ -113,7 +114,7 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
             各データ点に対する各クラスで重み付けた平均確率
 
         """
-        avg_probas = np.asarray([clf.predict_proba(X)
+        probas = np.asarray([clf.predict_proba(X)
                                  for clf in self.classifiers_])
         avg_proba = np.average(probas, axis=0, weights=self.weights)
         return avg_proba
@@ -131,5 +132,3 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
                     out['%s__%s' % (name, key)] = value
 
             return out
-        """
-                    )
