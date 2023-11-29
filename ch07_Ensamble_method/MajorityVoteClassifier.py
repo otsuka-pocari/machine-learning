@@ -86,7 +86,7 @@ class MajorityVoteClassifier(BaseEstimator, ClassifierMixin):
 
             # clf.predict呼び出しの結果を収集
             predictions = np.asarray([clf.predict(X)
-                                       for clf in self.classifier_]).T
+                                       for clf in self.classifiers]).T
 
             # 各データ点のクラス確率に重みを掛け合わせた値が最大となる
             # 列番号を配列として返す
