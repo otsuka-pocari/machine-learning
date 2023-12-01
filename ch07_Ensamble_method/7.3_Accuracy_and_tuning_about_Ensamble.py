@@ -12,6 +12,7 @@ from MajorityVoteClassifier import MajorityVoteClassifier
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 from itertools import product
+from sklearn.model_selection import GridSearchCV
 
 # 前提コード
 iris = datasets.load_iris()
@@ -109,3 +110,22 @@ plt.text(-12.5, 4.5,
          ha='center', va='center',
          fontsize=12, rotation=90)
 plt.show()
+
+print(mv_clf.get_params())
+
+params = {'decisiontreeclassifier__max_depth':[1, 2],
+          'pipeline-1__clf__C':[0.001, 0.1, 100.0]}
+grid = GridSearchCV(estimator=mv_clf,
+                    param_grid=params,
+                    cv=10,
+                    scoring='roc_auc')
+grid.fit(X_train, y_train)
+
+for r, _ in enumerate(grid.cv_results_['mean_test_score']):
+    print("%0.3f +/- %0.2f %r"
+          % (grid.cv_results_['mean_test_score'][r],
+             grid.cv_results_['std_test_score'][r] / 2.0,
+             grid.cv_results_['params'][r]))
+
+print('Best parameters: %s' % grid.best_params_)
+print('Accuracy: %.2f' % grid.best_score_)
